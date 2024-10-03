@@ -1,8 +1,7 @@
 from django.shortcuts import render
 from rest_framework import generics, permissions, pagination, status
 
-from accounts.permissions import IsAuthor
-
+from permissions import IsAuthor
 from .models import Task
 from .serializers import CompleteTaskSerializer, TaskSerializer
 

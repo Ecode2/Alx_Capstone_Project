@@ -3,7 +3,6 @@ from rest_framework import generics, permissions, response, status
 from django.contrib.auth import login, authenticate, logout
 from rest_framework.authtoken.models import Token
 
-from .permissions import IsAuthorOrReadOnly
 from django.contrib.auth.models import User
 from .serializers import UserSerializer, PublicUserSerializer
 
