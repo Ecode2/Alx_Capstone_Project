@@ -1,7 +1,7 @@
 from django.shortcuts import render
-from rest_framework import generics, pagination, response, permissions
+from rest_framework import generics, pagination, response, permissions, status
 
-from permissions import IsRecipient
+from .permissions import IsRecipient
 from .signals import Notify
 from .models import Notification
 from .serializers import NotificationSerializer
@@ -46,3 +46,17 @@ class UnreadNotificationsView(generics.ListAPIView):
 
     def get_queryset(self):
         return Notify.get_unread_notifications(self.request.user)
+    
+class MarkAllAsReadView(generics.GenericAPIView):
+    permission_classes = [IsRecipient, permissions.IsAuthenticated]
+
+    def post(self, request, *args, **kwargs):
+        Notify.mark_all_as_read(request.user)
+        return response.Response(data={"detail": "All notifications marked as read"}, status=status.HTTP_200_OK)
+
+class MarkAllAsUnreadView(generics.GenericAPIView):
+    permission_classes = [IsRecipient, permissions.IsAuthenticated]
+
+    def post(self, request, *args, **kwargs):
+        Notify.mark_all_as_unread(request.user)
+        return response.Response(data={"detail": "All notifications marked as unread"}, status=status.HTTP_200_OK)

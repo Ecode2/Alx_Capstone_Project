@@ -5,10 +5,11 @@ from .models import Task
 
 class TaskSerializer(ModelSerializer):
     author = StringRelatedField()
+    category = StringRelatedField()
 
     class Meta:
         model = Task
-        fields = ["id", "Title", "Description", "DueDate", "PriorityLevel", "Status", "completed_at", "author"]
+        fields = ["id", "Title", "Description", "DueDate", "PriorityLevel", "Status", "completed_at", "author", "category"]
         read_only_fields = ["id", "completed_at", "Status"]
 
     def validate_DueDate(self, value):
@@ -19,7 +20,7 @@ class TaskSerializer(ModelSerializer):
             raise ValidationError("due date can not be in the past")
         return value
 
-class CompleteTaskSerializer(ModelSerializer):
+class TaskStatusSerializer(ModelSerializer):
     class Meta:
         model = Task
         fields = []
