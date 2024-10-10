@@ -5,6 +5,20 @@ from categories.models import Category
 
 # Create your models here.
 class Task(models.Model):
+    """
+    Task model representing a task in the task management system.
+    Attributes:
+        Title (str): The title of the task, with a maximum length of 150 characters.
+        Description (str): A detailed description of the task.
+        DueDate (datetime): The due date and time for the task.
+        PriorityLevel (str): The priority level of the task, which can be 'LOW', 'MEDIUM', or 'HIGH'. Defaults to 'LOW'.
+        Status (str): The status of the task, which can be 'PENDING' or 'COMPLETED'. Defaults to 'PENDING'.
+        category (Category): The category to which the task belongs. Can be null or blank.
+        author (User): The user who created the task.
+        completed_at (datetime): The date and time when the task was completed. Can be null.
+    Meta:
+        ordering (list): Orders the tasks by due date in descending order.
+    """
     Title = models.CharField(max_length=150)
     Description = models.TextField()
     DueDate = models.DateTimeField()

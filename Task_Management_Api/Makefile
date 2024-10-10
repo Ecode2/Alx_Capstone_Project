@@ -1,8 +1,5 @@
-venv:
-	source env/bin/activate
-
 run:
-	python manage.py runserver 5500
+	python manage.py runserver
 
 db:
 	python manage.py makemigrations
