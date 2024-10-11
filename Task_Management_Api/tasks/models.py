@@ -36,3 +36,11 @@ class Task(models.Model):
 
     class Meta:
         ordering = ['-DueDate']
+
+class TaskHistory(models.Model):
+    task = models.ForeignKey(Task, on_delete=models.CASCADE, related_name="history")
+    author = models.ForeignKey(User, on_delete=models.CASCADE)
+    completed_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self) -> str:
+        return f"{self.task.Title} - {self.completed_at}"

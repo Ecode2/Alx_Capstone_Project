@@ -5,8 +5,8 @@ from rest_framework import generics, permissions, pagination, status, response
 from notifications.signals import Notify
 
 from .permissions import IsAuthor
-from .models import Task
-from .serializers import TaskStatusSerializer, TaskSerializer
+from .models import Task, TaskHistory
+from .serializers import TaskHistorySerializer, TaskStatusSerializer, TaskSerializer
 
 # Create your views here.
 class TaskListCreateView(generics.ListCreateAPIView):
@@ -120,13 +120,22 @@ class ToggleTaskStatusView(generics.GenericAPIView):
     
     def post(self, request, *args, **kwargs):
         task: Task = self.get_object()
-        if task.Status == "Completed":
-            task.Status = "Pending"
+
+        if task.Status == "COMPLETED":
+            task.Status = "PENDING"
             Notify.send(actor=self.request.user, recipient=task.author, verb=f"Task {task.Title} flagged as pending", target=task)
+            try:
+                history = TaskHistory.objects.get(task=task, author=request.user)
+                history.delete()
+            except TaskHistory.DoesNotExist:
+                ## TaskHistory was not found
+                pass
+            
         else:
-            task.Status = "Completed"
+            task.Status = "COMPLETED"
             Notify.send(actor=self.request.user, recipient=task.author, verb=f"Task {task.Title} is now complete", target=task)
             task.completed_at = datetime.datetime.now(datetime.UTC)
+            TaskHistory.objects.create(task=task, author=request.user, completed_at=datetime.datetime.now(datetime.UTC))
         
         task.save()
         return response.Response(data={"detail": "Task status updated"}, status=status.HTTP_200_OK)
@@ -155,44 +164,11 @@ class TaskHistoryView(generics.ListAPIView):
         - IsAuthor: Custom permission to check if the user is the author of the tasks.
         - IsAuthenticated: Ensures the user is authenticated.
     """
-    serializer_class = TaskSerializer
+    serializer_class = TaskHistorySerializer
     permission_classes = [IsAuthor, permissions.IsAuthenticated]
     pagination_class = pagination.PageNumberPagination
-    ordering_fields = ['completed_at', 'DueDate']
+    ordering_fields = ['completed_at']
     ordering = ['-completed_at']
 
     def get_queryset(self):
-        return Task.objects.filter(author=self.request.user, Status="Completed")
-    
-''' class TaskPendingView(generics.ListAPIView):
-    """
-    TaskPendingView to list all pending tasks for the authenticated user.
-
-    This view inherits from `generics.ListAPIView` and provides a list of pending tasks
-    for the user making the request. It uses the `TaskSerializer` to serialize the
-    task data and applies the `IsAuthor` and `IsAuthenticated` permission classes
-    to ensure that only authenticated users who are the authors of the tasks can
-    access this view.
-
-    Attributes:
-        serializer_class (TaskSerializer): The serializer class used to serialize the task data.
-        permission_classes (list): The list of permission classes applied to this view.
-        pagination_class (pagination.PageNumberPagination): The pagination class used to paginate the task data.
-        ordering_fields (list): The list of fields that can be used to order the task data.
-        ordering (list): The default ordering applied to the task data.
-
-    Methods:
-        get_queryset(self): Returns the queryset of pending tasks for the authenticated user.
-
-    Permissions:
-        - IsAuthor: Custom permission to check if the user is the author of the tasks.
-        - IsAuthenticated: Ensures the user is authenticated.
-    """
-    serializer_class = TaskSerializer
-    permission_classes = [IsAuthor, permissions.IsAuthenticated]
-    pagination_class = pagination.PageNumberPagination
-    ordering_fields = ['DueDate', 'PriorityLevel']
-    ordering = ['DueDate']
-
-    def get_queryset(self):
-        return Task.objects.filter(author=self.request.user, Status="Pending") '''
+        return TaskHistory.objects.filter(author=self.request.user)

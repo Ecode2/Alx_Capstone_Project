@@ -1,7 +1,7 @@
 from rest_framework.serializers import ModelSerializer, StringRelatedField, ValidationError
 import datetime
 
-from .models import Task
+from .models import Task, TaskHistory
 
 class TaskSerializer(ModelSerializer):
     """
@@ -55,3 +55,8 @@ class TaskStatusSerializer(ModelSerializer):
     class Meta:
         model = Task
         fields = []
+
+class TaskHistorySerializer(ModelSerializer):
+    class Meta:
+        model=TaskHistory
+        fields = ["id", "task", "author", "completed_at"]

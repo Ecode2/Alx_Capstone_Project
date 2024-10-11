@@ -1,33 +1,22 @@
 from rest_framework import serializers
-from rest_framework.authtoken.models import Token
 from django.contrib.auth import get_user_model, models
 
 class UserSerializer(serializers.ModelSerializer):
     """
-    UserSerializer is a ModelSerializer for the User model that includes a custom token field.
+    UserSerializer is a ModelSerializer for the django User model
     Fields:
         - id: The unique identifier for the user (read-only).
         - username: The username of the user.
         - email: The email address of the user.
         - password: The password of the user (write-only).
-        - token: The authentication token for the user (read-only).
-    Methods:
-        - get_token(obj): Retrieves or creates an authentication token for the user.
-        - create(validated_data): Creates a new user with the provided validated data.
     """
-    token = serializers.SerializerMethodField()
     
 
     class Meta:
         model = models.User
-        fields = ['id', 'username', 'email', 'password', 'token']
+        fields = ['id', 'username', 'email', 'password']
         extra_kwargs = {'password': {'write_only': True}}
-        read_only_fields = ['id', 'token']
-
-    
-    def get_token(self, obj):
-        token, created = Token.objects.get_or_create(user=obj)
-        return token.key
+        read_only_fields = ['id']
 
     def create(self, validated_data):
         user = get_user_model().objects.create_user(
@@ -36,7 +25,7 @@ class UserSerializer(serializers.ModelSerializer):
             password=validated_data["password"]
         )
         return user
-    
+
 class PublicUserSerializer(serializers.ModelSerializer):
     """
     Serializer for public user information.
