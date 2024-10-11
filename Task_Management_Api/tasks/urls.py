@@ -7,11 +7,13 @@ Routes:
     - '' : Handles listing and creating tasks via `TaskListCreateView`.
     - '<int:pk>/' : Handles reading, updating, and deleting a specific task via `TaskDetailView`.
     - '<int:pk>/mark/' : Toggles the completion status of a specific task via `ToggleTaskStatusView`.
+    - 'history/' : Hnadles listing task history via `TaskHistoryView` 
 
 Views:
     - TaskListCreateView: View for listing and creating tasks.
     - TaskDetailView: View for reading, updating, and deleting a specific task.
     - ToggleTaskStatusView: View for toggling the completion status of a task.
+    - TaskHistoryView: View for listing history of completed tasks
 
 """
 from django.urls import path

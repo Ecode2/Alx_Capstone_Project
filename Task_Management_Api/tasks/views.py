@@ -89,6 +89,12 @@ class TaskDetailView(generics.RetrieveUpdateDestroyAPIView):
     
     def perform_destroy(self, instance):
         Notify.send(actor=self.request.user, recipient=instance.author, verb=f"Task {instance.Title} has been deleted", target=instance)
+        try:
+                history = TaskHistory.objects.get(task=instance, author=self.request.user)
+                history.delete()
+        except TaskHistory.DoesNotExist:
+            ## TaskHistory was not found
+            pass
         return super().perform_destroy(instance)
     
     
@@ -145,20 +151,20 @@ class TaskHistoryView(generics.ListAPIView):
     TaskHistoryView to list all completed tasks for the authenticated user.
 
     This view inherits from `generics.ListAPIView` and provides a list of completed tasks
-    for the user making the request. It uses the `TaskSerializer` to serialize the
-    task data and applies the `IsAuthor` and `IsAuthenticated` permission classes
+    for the user making the request. It uses the `TaskHistorySerializer` to serialize the
+    task history data and applies the `IsAuthor` and `IsAuthenticated` permission classes
     to ensure that only authenticated users who are the authors of the tasks can
     access this view.
 
     Attributes:
-        serializer_class (TaskSerializer): The serializer class used to serialize the task data.
+        serializer_class (TaskHistorySerializer): The serializer class used to serialize the task history data.
         permission_classes (list): The list of permission classes applied to this view.
-        pagination_class (pagination.PageNumberPagination): The pagination class used to paginate the task data.
-        ordering_fields (list): The list of fields that can be used to order the task data.
-        ordering (list): The default ordering applied to the task data.
+        pagination_class (pagination.PageNumberPagination): The pagination class used to paginate the history data.
+        ordering_fields (list): The list of fields that can be used to order the history data.
+        ordering (list): The default ordering applied to the history data.
 
     Methods:
-        get_queryset(self): Returns the queryset of completed tasks for the authenticated user.
+        get_queryset(self): Returns the queryset of task hstory for the authenticated user.
 
     Permissions:
         - IsAuthor: Custom permission to check if the user is the author of the tasks.

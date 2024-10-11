@@ -29,7 +29,7 @@ class TaskSerializer(ModelSerializer):
 
     class Meta:
         model = Task
-        fields = ["id", "Title", "Description", "DueDate", "PriorityLevel", "Status", "completed_at", "author", "category"]
+        fields = ["id", "Title", "Description", "DueDate", "category", "PriorityLevel", "Status", "completed_at", "author"]
         read_only_fields = ["id", "completed_at", "Status"]
 
     def validate_DueDate(self, value):
@@ -57,6 +57,16 @@ class TaskStatusSerializer(ModelSerializer):
         fields = []
 
 class TaskHistorySerializer(ModelSerializer):
+    """
+    TaskHistorySerializer is a ModelSerializer for the TaskHistory model.
+
+    Fields:
+        - id: Integer, read-only
+        - task: String
+        - author: String, related field
+        - completed_at: DateTime, read-only
+    """
     class Meta:
         model=TaskHistory
         fields = ["id", "task", "author", "completed_at"]
+        read_only_fields = ["id", "completed_at"]

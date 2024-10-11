@@ -38,9 +38,21 @@ class Task(models.Model):
         ordering = ['-DueDate']
 
 class TaskHistory(models.Model):
+    """
+    TaskHistory model representing the history of completed tasks in the task management system.
+    Attributes:
+        task (Task): A foreign key to the completed task
+        author (User): The user who created the task.
+        completed_at (datetime): The date and time when the task was completed.
+    Meta:
+        ordering (list): Orders task history by completion date in descending order.
+    """
     task = models.ForeignKey(Task, on_delete=models.CASCADE, related_name="history")
     author = models.ForeignKey(User, on_delete=models.CASCADE)
     completed_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        ordering = ['-completed_at']
 
     def __str__(self) -> str:
         return f"{self.task.Title} - {self.completed_at}"
