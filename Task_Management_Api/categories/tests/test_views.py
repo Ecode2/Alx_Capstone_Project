@@ -1,0 +1,55 @@
+import pdb
+from ..models import Category
+from django.contrib.auth.models import User
+from rest_framework import status
+from rest_framework_simplejwt.tokens import RefreshToken
+ 
+from .test_setup import TestCategorySetUp
+
+
+class TestCategoryViews(TestCategorySetUp):
+
+    def test_1_create_new_category(self):
+        response = self.client.post(self.list_create_url, {"name": self.category_data.get("name")})
+
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+        self.assertEqual(set(response.data), {'id', 'name'})
+        self.assertEqual(response.data.get("name"), self.category_data.get("name"))
+        self.assertEqual(Category.objects.get(name=self.category_data.get("name")).author.username, "Jane")
+
+    def test_2_create_new_default_category(self):
+        self.client.credentials(HTTP_AUTHORIZATION="Bearer " + self.admin_access_token)
+        response = self.client.post(self.list_create_url, {"name": self.category_data.get("name")})
+
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+        self.assertEqual(set(response.data), {'id', 'name'})
+        self.assertEqual(response.data.get("name"), self.category_data.get("name"))  
+
+    def test_3_list_default_and_user_created_categories(self):
+        self.client.credentials(HTTP_AUTHORIZATION="Bearer " + self.admin_access_token)
+        response = self.client.get(self.list_create_url)
+
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(set(response.data), {"count","next","previous","results"})
+        self.assertIsNotNone(response.data.get("results"))
+        self.assertIsInstance(response.data.get("results"), list)  
+
+    def test_4_create_new_category_with_missing_name(self):
+        response = self.client.post(self.list_create_url, {"name": ""})
+
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+        self.assertIn("name", response.data)
+
+    def test_5_list_categories_with_no_authentication(self):
+        self.client.credentials()
+        response = self.client.get(self.list_create_url)
+
+        self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
+        self.assertIn("detail", response.data)
+
+    def test_6_create_new_category_with_invalid_token(self):
+        self.client.credentials(HTTP_AUTHORIZATION="Bearer invalidtoken")
+        response = self.client.post(self.list_create_url, {"name": self.category_data.get("name")})
+
+        self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
+        self.assertIn("detail", response.data)

@@ -12,12 +12,13 @@ The Task Management API is a robust and scalable backend service designed to man
 - **Task Retrieval**: Retrieve tasks based on different criteria such as status, priority, and due date.
 - **Task Update**: Update existing tasks to change their attributes.
 - **Task Deletion**: Delete tasks that are no longer needed.
+- **Task History**: Manage a history of previously completed tasks.
+- **Categorization**: Create and use Default categories to section tasks into related fields.
+- **Notification System**: Manages sending of notifications after certain action are performed.
 - **User Authentication**: Secure endpoints with user authentication and authorization.
 - **Pagination**: Efficiently handle large sets of tasks with pagination.
-
-## System Design
-
-The system design is documented in a `.drawio` file. You can view the detailed system architecture [here](path/to/system_design.drawio).
+- **Sorting**: Sort tasks based on different attributes such as due date, priority, and status.
+- **Filtering**: Filter tasks based on different attributes such as due date, priority, and status.
 
 ## Database Design
 
@@ -32,8 +33,8 @@ To install and run the Task Management API, follow these steps:
 1. **Clone the repository**:
 
     ```sh
-    git clone https://github.com/yourusername/task-management-api.git
-    cd task-management-api
+    git clone https://github.com/Ecode2/Alx_Capstone_Project.git
+    cd Alx_Capstone_Project/Task_Management_Api
     ```
 
 2. **Install dependencies**:
@@ -41,15 +42,28 @@ To install and run the Task Management API, follow these steps:
     ```sh
     pip install -r requirements.txt
     ```
+   
+3. **Copy the environmental variable file**:
 
-3. **Set up the database**:
+    ```sh
+    cp .env.example .env
+    ```
+   
+4. **Set environmental variables for development**:
+
+    ```sh
+    SECRET_KEY="Your Secret Key"
+    DEBUG=True
+    ```
+
+5. **Set up the database**:
 
     ```sh
     python manage.py makemigrations
     python manage.py migrate
     ```
 
-4. **Run the development server**:
+6. **Run the development server**:
 
     ```sh
     python manage.py runserver
@@ -75,7 +89,6 @@ The project uses a CI/CD pipeline with the following workflow:
 ## Additional Information
 
 - **API Documentation**: Detailed API documentation is available at [API Documentation Link].
-- **Contributing**: Contributions are welcome. Please read the [CONTRIBUTING.md](path/to/CONTRIBUTING.md) for guidelines.
 - **License**: This project is licensed under the MIT License. See the [LICENSE](path/to/LICENSE) file for details.
 
-For any questions or support, please contact [Your Contact Information].
+For any questions or support, please contact Me on [X](https://x.com/abubakar_alaya?s=11).

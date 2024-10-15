@@ -26,7 +26,7 @@ class UserSerializer(serializers.ModelSerializer):
         )
         return user
 
-class PublicUserSerializer(serializers.ModelSerializer):
+''' class PublicUserSerializer(serializers.ModelSerializer):
     """
     Serializer for public user information.
 
@@ -43,3 +43,4 @@ class PublicUserSerializer(serializers.ModelSerializer):
     class Meta:
         model = models.User
         fields = ['id', 'username', 'email']
+'''
