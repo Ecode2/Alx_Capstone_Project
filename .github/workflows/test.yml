@@ -1,0 +1,38 @@
+name: Django CI
+
+on: 
+    push:
+        branches:
+            - main
+    pull_request:
+        branches:
+            - main
+
+jobs:
+    test:
+        runs-on: ubuntu-latest
+
+        env:
+          SECRET_KEY: '\x93\xa2\x11\x9c\xeb\x97!^\xfc\x0e\xedu3_\xc5\x19KhZ\xaa\xc3W\xa9\xc24v\xfc\xfb\x95\xd9\xca\xff'
+          DEBUG: True
+
+        steps:
+        - name: Checkout code
+          uses: actions/checkout@v2
+
+        - name: Set up Python
+          uses: actions/setup-python@v2
+          with:
+            python-version: '3.10'
+
+        - name: Install dependencies
+          run: |
+            cd Task_Management_Api
+            python -m pip install --upgrade pip
+            pip install -r requirements.txt
+
+        - name: Run tests
+          run: |
+            cd Task_Management_Api
+            python manage.py migrate
+            python manage.py test
