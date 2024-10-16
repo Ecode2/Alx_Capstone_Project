@@ -1,8 +1,6 @@
 import pdb
 from ..models import Category
-from django.contrib.auth.models import User
 from rest_framework import status
-from rest_framework_simplejwt.tokens import RefreshToken
  
 from .test_setup import TestCategorySetUp
 
@@ -53,3 +51,30 @@ class TestCategoryViews(TestCategorySetUp):
 
         self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
         self.assertIn("detail", response.data)
+
+    def test_7_retrieve_category(self):
+        response = self.client.get(self.crud_url.format(self.category.id))
+
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(set(response.data), {'id', 'name'})
+        self.assertEqual(response.data.get("name"), self.category.name)
+
+    def test_8_update_category(self):
+        response = self.client.put(self.crud_url, {"name": "Updated Category"})
+
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(response.data.get("name"), "Updated Category")
+        self.assertEqual(Category.objects.get(id=self.category.id).name, "Updated Category")
+
+    def test_9_partial_update_category(self):
+        response = self.client.patch(self.crud_url, {"name": "Partially Updated Category"})
+
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(response.data.get("name"), "Partially Updated Category")
+        self.assertEqual(Category.objects.get(id=self.category.id).name, "Partially Updated Category")
+
+    def test_10_delete_category(self):
+        response = self.client.delete(self.crud_url)
+
+        self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
+        self.assertFalse(Category.objects.filter(id=self.category.id).exists())

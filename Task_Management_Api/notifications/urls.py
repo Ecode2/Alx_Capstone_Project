@@ -22,4 +22,6 @@ urlpatterns = [
     path("<int:pk>/", views.NotificationDetailView.as_view(), name="detail_notification"),
     path("read/", views.ReadNotificationsView.as_view(), name="read_notifications"),
     path("unread/", views.UnreadNotificationsView.as_view(), name="unread_notifications"),
+    path("read/all/", views.MarkAllAsReadView.as_view(), name="read_all_notifications"),
+    path("unread/all/", views.MarkAllAsUnreadView.as_view(), name="unread_all_notifications"),
 ]

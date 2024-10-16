@@ -62,6 +62,4 @@ class TestAccountViews(TestAccountSetUp):
         response = self.client.delete(self.profile_url)
         
         self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
-        with self.assertRaises(User.DoesNotExist):
-            User.objects.get(email=self.user_data["email"])
-
+        self.assertFalse(User.objects.filter(email=self.user_data["email"]).exists())

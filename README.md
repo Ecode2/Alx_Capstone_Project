@@ -1,6 +1,7 @@
 # Task Management API
 
 This is the final project required to graduate from the ALX Backend Web Development course.
+![Swagger Ui](assets/OpenApi_SwaggerUi.png)
 
 ## Introduction
 
@@ -24,7 +25,7 @@ The Task Management API is a robust and scalable backend service designed to man
 
 The database design is illustrated in the image below:
 
-![Database Design](path/to/database_design_image.png)
+![Database Design](assets/Database_Design.png)
 
 ## Installation
 
@@ -42,16 +43,16 @@ To install and run the Task Management API, follow these steps:
     ```sh
     pip install -r requirements.txt
     ```
-   
+
 3. **Copy the environmental variable file**:
 
     ```sh
     cp .env.example .env
     ```
-   
+
 4. **Set environmental variables for development**:
 
-    ```sh
+    ```python
     SECRET_KEY="Your Secret Key"
     DEBUG=True
     ```

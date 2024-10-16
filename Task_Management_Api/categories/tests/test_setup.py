@@ -28,7 +28,8 @@ class TestCategorySetUp(APITestCase):
         }
 
         self.category = Category.objects.create(name="Work")
-        self.crud_url = reverse("read_update_delete_category", args=[self.category.id])
+        self.user_category = Category.objects.create(name="User Category")
+        self.crud_url = reverse("read_update_delete_category", args=[self.user_category.id])
 
         admin_token = RefreshToken.for_user(self.user)
         self.admin_access_token = str(admin_token.access_token)

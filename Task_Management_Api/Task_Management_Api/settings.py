@@ -39,9 +39,31 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = config("SECRET_KEY")
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = config("DEBUG", default=False, cast=bool)
+if config("DEBUG", default=False, cast=bool) == False:
+    DEBUG = config("DEBUG", default=False, cast=bool)
+    ALLOWED_HOSTS = config("ALLOWED_HOSTS", default="", cast=Csv())
 
-ALLOWED_HOSTS = config("ALLOWED_HOSTS", default="", cast=Csv())
+    SECURE_SSL_REDIRECT=True
+
+    SECURE_HSTS_INCLUDE_SUBDOMAINS=True
+
+    SECURE_HSTS_SECONDS=30
+
+    SESSION_COOKIE_SECURE=True
+
+    CSRF_COOKIE_SECURE=True
+
+    SECURE_HSTS_PRELOAD=True
+
+    SECURE_BROWSER_XSS_FILTER=True
+
+    X_FRAME_OPTIONS='DENY'
+
+else:
+    DEBUG = True
+
+    ALLOWED_HOSTS = []
+
 
 
 # Application definition
@@ -98,16 +120,27 @@ WSGI_APPLICATION = "Task_Management_Api.wsgi.application"
 # Database
 # https://docs.djangoproject.com/en/5.1/ref/settings/#databases
 
-DATABASES = {
-    "default": {
-        "ENGINE": "django.db.backends.sqlite3",
-        "NAME": BASE_DIR / "db.sqlite3",
-    },
-    "test": {
-        "ENGINE": "django.db.backends.sqlite3",
-        "NAME": BASE_DIR / "test_db.sqlite3",
+if not DEBUG:
+
+    DATABASES = {
+        "default": {
+            "ENGINE": "django.db.backends.postgresql",
+            "NAME": config("DATABASE_NAME"),
+            "USER": config("DATABASE_USER"),
+            "PASSWORD": config("DATABASE_PASSWORD"),
+            "HOST": config("DATABASE_HOST"),
+            "PORT": config("DATABASE_PORT"),
+        }
     }
-}
+
+else:
+
+    DATABASES = {
+        "default": {
+            "ENGINE": "django.db.backends.sqlite3",
+            "NAME": BASE_DIR / "db.sqlite3",
+        }
+    }
 
 
 REST_FRAMEWORK = {
@@ -142,7 +175,7 @@ SPECTACULAR_SETTINGS = {
     'REDOC_DIST': 'SIDECAR',
 }
 SIMPLE_JWT = {
-    "ACCESS_TOKEN_LIFETIME": timedelta(minutes=10),
+    "ACCESS_TOKEN_LIFETIME": timedelta(minutes=30),
     "REFRESH_TOKEN_LIFETIME": timedelta(days=1),
     "UPDATE_LAST_LOGIN": True,
 }
@@ -182,6 +215,9 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/5.1/howto/static-files/
 
 STATIC_URL = "static/"
+if not DEBUG:
+    STATIC_ROOT = BASE_DIR / 'staticfiles'
+    STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.1/ref/settings/#default-auto-field
