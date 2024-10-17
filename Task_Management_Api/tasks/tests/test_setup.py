@@ -34,7 +34,7 @@ class TestTaskSetUp(APITestCase):
         }
 
         self.category = Category.objects.create(name="Work", author=self.user)
-        self.task = Task.objects.create(title="Test Task", description="Test Description", completed=False, author=self.user, category=self.category)
+        self.task = Task.objects.create(Title="Test Task", Description="Test Description", author=self.user, category=self.category)
         self.task_history = TaskHistory.objects.create(task=self.task, author=self.user)
 
         self.crud_url = reverse("read_update_delete_task", args=[self.task.id])
