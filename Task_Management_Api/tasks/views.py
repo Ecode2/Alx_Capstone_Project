@@ -45,10 +45,11 @@ class TaskListCreateView(generics.ListCreateAPIView):
     
     def get_queryset(self):
         return Task.objects.filter(author=self.request.user)
-    
+        
     def perform_create(self, serializer:TaskSerializer):
-        Notify.send(actor=self.request.user, recipient=self.request.user, verb="Task created", target=serializer.validated_data)
-        return serializer.save(author=self.request.user)
+        serializer.save(author=self.request.user)
+        task = Task.objects.get(id=serializer.data.get("id"))
+        Notify.send(actor=self.request.user, recipient=self.request.user, verb="Task created", target=task)
     
 class TaskDetailView(generics.RetrieveUpdateDestroyAPIView):
     """

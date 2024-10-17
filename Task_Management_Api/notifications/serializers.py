@@ -1,6 +1,18 @@
 from rest_framework import serializers
 from .models import Notification
 
+
+class GenericRelatedField(serializers.RelatedField):
+    def to_representation(self, value):
+        return str(value)
+    
+    def to_internal_value(self, data):
+        model_class = self.queryset.model
+        try:
+            return model_class.objects.get(pk=data)
+        except model_class.DoesNotExist:
+            return serializers.ValidationError(f"Object with pk={data} does not exist.")
+
 class NotificationSerializer(serializers.ModelSerializer):
     """
     Serializer for the Notification model.
@@ -18,7 +30,8 @@ class NotificationSerializer(serializers.ModelSerializer):
         fields (list): The fields to include in the serialized output.
         read_only_fields (list): The fields that should be read-only.
     """
+    target = GenericRelatedField(read_only=True)
     class Meta:
         model=Notification
         fields = ["id", "actor", "recipient", "verb", "target", "is_read", "timestamp"]
-        read_only_fields = ['id', 'timestamp']
+        read_only_fields = ['id', "actor",  "verb", "recipient", "is_read", 'timestamp']

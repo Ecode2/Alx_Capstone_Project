@@ -21,9 +21,11 @@ class Notify:
             recipient=recipient,
             actor=actor,
             verb=verb,
-            target_content_type = target_content_type,
-            target_object_id=target_object_id,
+            target=target,
         )
+
+        #target_content_type = target_content_type,
+        #target_object_id=target_object_id,
         return notification
 
     @staticmethod
