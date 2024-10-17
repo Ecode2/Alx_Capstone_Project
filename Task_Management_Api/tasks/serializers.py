@@ -1,4 +1,4 @@
-from rest_framework.serializers import ModelSerializer, StringRelatedField, ValidationError
+from rest_framework.serializers import (ModelSerializer, StringRelatedField, ValidationError)
 import datetime
 
 from .models import Task, TaskHistory

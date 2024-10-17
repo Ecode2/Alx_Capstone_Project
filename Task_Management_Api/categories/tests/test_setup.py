@@ -28,7 +28,8 @@ class TestCategorySetUp(APITestCase):
         }
 
         self.category = Category.objects.create(name="Work")
-        self.user_category = Category.objects.create(name="User Category")
+        
+        self.user_category = Category.objects.create(name="User Category", author=self.user)
         self.crud_url = reverse("read_update_delete_category", args=[self.user_category.id])
 
         admin_token = RefreshToken.for_user(self.user)
@@ -37,7 +38,7 @@ class TestCategorySetUp(APITestCase):
         token1 = RefreshToken.for_user(self.user)
         self.access_token1 = str(token1.access_token)
 
-        token2 = RefreshToken.for_user(self.user)
+        token2 = RefreshToken.for_user(self.user2)
         self.access_token2 = str(token2.access_token)
 
         self.client = APIClient(enforce_csrf_checks=True)

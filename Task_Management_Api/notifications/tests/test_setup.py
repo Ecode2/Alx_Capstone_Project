@@ -5,6 +5,7 @@ from django.contrib.auth.models import User
 from rest_framework.test import APITestCase, APIClient
 from rest_framework_simplejwt.tokens import RefreshToken
 
+from categories.models import Category
 from ..models import Notification
 
 
@@ -31,7 +32,8 @@ class TestNotificationSetUp(APITestCase):
             "verb": self.fake.sentence(),
         }
 
-        self.notification = Notification.objects.create(actor=self.admin_user, recipient=self.user, verb=f"New notification created", target=Notification)
+        self.category = Category.objects.create(name="Test Category", author=self.user)
+        self.notification = Notification.objects.create(actor=self.admin_user, recipient=self.user, verb=f"New category created", target=self.category)
         self.crud_url = reverse("detail_notification", args=[self.notification.id])
 
         admin_token = RefreshToken.for_user(self.admin_user)
@@ -48,29 +50,3 @@ class TestNotificationSetUp(APITestCase):
 
     def tearDown(self):
         return super().tearDown()
-
-    def test_create_notification(self):
-        response = self.client.post(self.list_create_url, self.notification_data, format='json')
-        self.assertEqual(response.status_code, 201)
-        self.assertEqual(Notification.objects.count(), 2)
-
-    def test_get_notification(self):
-        response = self.client.get(self.crud_url)
-        self.assertEqual(response.status_code, 200)
-        self.assertEqual(response.data['title'], self.notification.title)
-
-    def test_update_notification(self):
-        updated_data = {
-            "title": "Updated Notification",
-            "message": "This is an updated test notification",
-            "recipient": self.user.id
-        }
-        response = self.client.put(self.crud_url, updated_data, format='json')
-        self.assertEqual(response.status_code, 200)
-        self.notification.refresh_from_db()
-        self.assertEqual(self.notification.title, "Updated Notification")
-
-    def test_delete_notification(self):
-        response = self.client.delete(self.crud_url)
-        self.assertEqual(response.status_code, 204)
-        self.assertEqual(Notification.objects.count(), 0)

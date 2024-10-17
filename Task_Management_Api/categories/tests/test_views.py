@@ -57,24 +57,24 @@ class TestCategoryViews(TestCategorySetUp):
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(set(response.data), {'id', 'name'})
-        self.assertEqual(response.data.get("name"), self.category.name)
+        self.assertEqual(response.data.get("name"), self.user_category.name)
 
     def test_8_update_category(self):
         response = self.client.put(self.crud_url, {"name": "Updated Category"})
-
+        
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(response.data.get("name"), "Updated Category")
-        self.assertEqual(Category.objects.get(id=self.category.id).name, "Updated Category")
+        self.assertEqual(Category.objects.get(id=self.user_category.id).name, "Updated Category")
 
     def test_9_partial_update_category(self):
         response = self.client.patch(self.crud_url, {"name": "Partially Updated Category"})
-
+        
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(response.data.get("name"), "Partially Updated Category")
-        self.assertEqual(Category.objects.get(id=self.category.id).name, "Partially Updated Category")
+        self.assertEqual(Category.objects.get(id=self.user_category.id).name, "Partially Updated Category")
 
-    def test_10_delete_category(self):
+    def test_99_delete_category(self):
         response = self.client.delete(self.crud_url)
-
+        
         self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
-        self.assertFalse(Category.objects.filter(id=self.category.id).exists())
+        self.assertFalse(Category.objects.filter(id=self.user_category.id).exists())

@@ -1,3 +1,4 @@
+import pdb
 from django.urls import path, include, reverse
 from django.contrib.auth.models import User
 from rest_framework import status
@@ -17,6 +18,7 @@ class TestNotificationUrls(TestNotificationSetUp, URLPatternsTestCase):
 
     def test_crud_url(self):
         response = self.client.get(self.crud_url)
+        pdb.set_trace()
         self.assertNotEqual(response.status_code, status.HTTP_404_NOT_FOUND)
 
     def test_read_notifications_url_post(self):
