@@ -16,7 +16,7 @@ class TestTaskSetUp(APITestCase):
 
         self.fake = Faker()
 
-        self.list_create_url = reverse("list_create_tasks")
+        self.list_create_url = reverse("list_create_task")
         self.crud_url = reverse("read_update_delete_task", args=[1])
         self.complete_toggle_url = reverse("toggle_complete_pending_task", args=[1])
         self.history_url = reverse("task_history")
