@@ -30,11 +30,13 @@ class TestTaskSetUp(APITestCase):
             "Description": self.fake.text(),
             "completed": False,
             "author": self.user,
-            'DueDate': self.fake.date_time_this_year(after_now=True, before_now=False) #'2024-12-19T22:12:06.211Z',
+            'DueDate': self.fake.date_time_this_year(after_now=True, before_now=False) #'',
         }
 
         self.category = Category.objects.create(name="Work", author=self.user)
-        self.task = Task.objects.create(Title="Test Task", Description="Test Description", author=self.user, category=self.category)
+        self.task = Task.objects.create(Title="Test Task", Description="Test Description", author=self.user, 
+            DueDate=self.fake.date_time_this_year(after_now=True, before_now=False), category=self.category)
+            
         self.task_history = TaskHistory.objects.create(task=self.task, author=self.user)
 
         self.crud_url = reverse("read_update_delete_task", args=[self.task.id])
