@@ -22,9 +22,8 @@ class TestTaskSerializers(TestTaskSetUp):
             "Title": "Test Task",
             "Description": "Test Description",
             "DueDate": invalid_due_date,
-            "PriorityLevel": 1,
+            "PriorityLevel": "LOW",
             "category": self.category.id,
-            "author": self.user.id
         })
 
         with self.assertRaises(ValidationError):
