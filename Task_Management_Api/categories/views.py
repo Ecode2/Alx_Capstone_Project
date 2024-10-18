@@ -37,7 +37,7 @@ class CategoryDetailView(generics.RetrieveUpdateDestroyAPIView):
 
         ## return an error if the user is not the author of the category
         elif category.author and category.author != self.request.user:
-            raise response.Response(status=status.HTTP_401_UNAUTHORIZED, data="user unauthorised to modify this category")
+            return response.Response(status=status.HTTP_401_UNAUTHORIZED, data="user unauthorised to modify this category")
         
         else:
             serializer.save()

@@ -3,6 +3,7 @@ from django.contrib.auth.models import User
 
 from categories.models import Category
 
+
 # Create your models here.
 class Task(models.Model):
     """
@@ -25,17 +26,18 @@ class Task(models.Model):
 
     PriorityLevelType = models.TextChoices("PriorityLevelType", "LOW MEDIUM HIGH")
     PriorityLevel = models.CharField(choices=PriorityLevelType.choices, max_length=10, default=PriorityLevelType.LOW)
-    
+
     StatusType = models.TextChoices("StatusType", "PENDING COMPLETED")
     Status = models.CharField(choices=StatusType.choices, max_length=10, default=StatusType.PENDING)
 
-    category = models.ForeignKey(Category, null=True, blank=True, on_delete=models.SET_NULL)
+    category = models.ForeignKey(Category, null=True, blank=True, related_name="tasks", on_delete=models.SET_NULL)
 
     author = models.ForeignKey(User, on_delete=models.CASCADE)
     completed_at = models.DateTimeField(null=True)
 
     class Meta:
         ordering = ['-DueDate']
+
 
 class TaskHistory(models.Model):
     """

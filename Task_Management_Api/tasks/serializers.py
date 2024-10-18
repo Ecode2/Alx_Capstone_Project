@@ -1,6 +1,8 @@
-from rest_framework.serializers import (ModelSerializer, StringRelatedField, ValidationError)
+from rest_framework.serializers import (ModelSerializer, StringRelatedField, PrimaryKeyRelatedField, ValidationError)
 import datetime
+from django.db import models
 
+from categories.models import Category
 from .models import Task, TaskHistory
 
 class TaskSerializer(ModelSerializer):
@@ -25,11 +27,12 @@ class TaskSerializer(ModelSerializer):
         - ValidationError: If the due date is in the past.
     """
     author = StringRelatedField()
-    category = StringRelatedField()
+    category = PrimaryKeyRelatedField(queryset=Category.objects.all(), allow_null=True)
 
     class Meta:
         model = Task
-        fields = ["id", "Title", "Description", "DueDate", "category", "PriorityLevel", "Status", "completed_at", "author"]
+        fields = ["id", "Title", "Description", "DueDate", "category", "PriorityLevel", "Status",
+                  "completed_at", "author"]
         read_only_fields = ["id", "completed_at", "Status"]
 
     def validate_DueDate(self, value):
@@ -39,6 +42,7 @@ class TaskSerializer(ModelSerializer):
         if due_date and due_date <= current_date:
             raise ValidationError("due date can not be in the past")
         return value
+
 
 class TaskStatusSerializer(ModelSerializer):
     """
@@ -55,6 +59,7 @@ class TaskStatusSerializer(ModelSerializer):
     class Meta:
         model = Task
         fields = []
+
 
 class TaskHistorySerializer(ModelSerializer):
     """

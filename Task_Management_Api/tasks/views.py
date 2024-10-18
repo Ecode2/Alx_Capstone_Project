@@ -8,6 +8,7 @@ from .permissions import IsAuthor
 from .models import Task, TaskHistory
 from .serializers import TaskHistorySerializer, TaskStatusSerializer, TaskSerializer
 
+
 # Create your views here.
 class TaskListCreateView(generics.ListCreateAPIView):
     """
@@ -37,20 +38,24 @@ class TaskListCreateView(generics.ListCreateAPIView):
     serializer_class = TaskSerializer
     permission_classes = [IsAuthor, permissions.IsAuthenticated]
     pagination_class = pagination.PageNumberPagination
-    filterset_fields = {"Status": ['icontains', 'iexact'], 
+    filterset_fields = {"Status": ['icontains', 'iexact'],
                         "PriorityLevel": ['icontains', 'iexact'],
-                        "DueDate":['iexact', 'gte', 'lte']}
+                        "DueDate": ['iexact', 'gte', 'lte']}
     ordering_fields = ['-DueDate', 'PriorityLevel']
     ordering = ['DueDate']
-    
+
     def get_queryset(self):
         return Task.objects.filter(author=self.request.user)
-        
-    def perform_create(self, serializer:TaskSerializer):
+
+    def perform_create(self, serializer: TaskSerializer):
         serializer.save(author=self.request.user)
         task = Task.objects.get(id=serializer.data.get("id"))
         Notify.send(actor=self.request.user, recipient=self.request.user, verb="Task created", target=task)
-    
+        #File "/usr/lib64/python3.12/json/encoder.py", line 180, in default
+        #raise TypeError(f'Object of type {o.__class__.__name__} '
+        #TypeError: Object of type User is not JSON serializable """
+
+
 class TaskDetailView(generics.RetrieveUpdateDestroyAPIView):
     """
     TaskDetailView to retrieve, update, or delete a task for the authenticated user.
@@ -78,27 +83,34 @@ class TaskDetailView(generics.RetrieveUpdateDestroyAPIView):
 
     def get_queryset(self):
         return Task.objects.filter(author=self.request.user)
-    
-    def perform_update(self, serializer:TaskSerializer):
+
+    def perform_update(self, serializer: TaskSerializer):
         #TODO: implement feature to make task unchangeable if completed
-        task: Task = self.get_object()
-        if task.Status == "Completed":
-            return response.Response(data={"detail": "task is completed and cannot be updated"}, status=status.HTTP_400_BAD_REQUEST)
+        task = self.get_object()
+        if task.Status == "COMPLETED":
+            return response.Response(data={"detail": "task is completed and cannot be updated"},
+                                     status=status.HTTP_400_BAD_REQUEST)
+
+        serializer.save()
+
+        Notify.send(actor=self.request.user, recipient=task.author, verb=f"Task {task.Title} has been updated",
+                    target=task)
         
-        Notify.send(actor=self.request.user, recipient=task.author, verb=f"Task {task.Title} has been updated", target=task)
-        return super().perform_update(serializer)
-    
-    def perform_destroy(self, instance):
-        Notify.send(actor=self.request.user, recipient=instance.author, verb=f"Task {instance.Title} has been deleted", target=instance)
+
+    def perform_destroy(self, instance:Task):
+
+        Notify.send(actor=self.request.user, recipient=instance.author, verb=f"Task {instance.Title} has been deleted",
+                    target=instance)
         try:
-                history = TaskHistory.objects.get(task=instance, author=self.request.user)
-                history.delete()
+            history = TaskHistory.objects.get(task=instance, author=self.request.user)
+            history.delete()
         except TaskHistory.DoesNotExist:
-            ## TaskHistory was not found
             pass
-        return super().perform_destroy(instance)
-    
-    
+
+        instance.delete()
+        
+
+
 class ToggleTaskStatusView(generics.GenericAPIView):
     """
     ToggleTaskStatusView to toggle the status of a task between "Completed" and "Pending" for the authenticated user.
@@ -124,29 +136,35 @@ class ToggleTaskStatusView(generics.GenericAPIView):
 
     def get_queryset(self):
         return Task.objects.filter(author=self.request.user)
-    
+
     def post(self, request, *args, **kwargs):
         task: Task = self.get_object()
 
         if task.Status == "COMPLETED":
             task.Status = "PENDING"
-            Notify.send(actor=self.request.user, recipient=task.author, verb=f"Task {task.Title} flagged as pending", target=task)
+            Notify.send(actor=self.request.user, recipient=task.author, verb=f"Task {task.Title} flagged as pending",
+                        target=task)
             try:
                 history = TaskHistory.objects.get(task=task, author=request.user)
                 history.delete()
             except TaskHistory.DoesNotExist:
-                ## TaskHistory was not found
                 pass
-            
+
         else:
             task.Status = "COMPLETED"
-            Notify.send(actor=self.request.user, recipient=task.author, verb=f"Task {task.Title} is now complete", target=task)
+            Notify.send(actor=self.request.user, recipient=task.author, verb=f"Task {task.Title} is now complete",
+                        target=task)
             task.completed_at = datetime.datetime.now(datetime.UTC)
-            TaskHistory.objects.create(task=task, author=request.user, completed_at=datetime.datetime.now(datetime.UTC))
-        
+            
+            try:
+                history = TaskHistory.objects.get(task=task, author=request.user)
+            except TaskHistory.DoesNotExist:
+                 TaskHistory.objects.create(task=task, author=request.user, completed_at=datetime.datetime.now(datetime.UTC))
+
         task.save()
         return response.Response(data={"detail": "Task status updated"}, status=status.HTTP_200_OK)
-    
+
+
 class TaskHistoryView(generics.ListAPIView):
     """
     TaskHistoryView to list all completed tasks for the authenticated user.
@@ -165,7 +183,7 @@ class TaskHistoryView(generics.ListAPIView):
         ordering (list): The default ordering applied to the history data.
 
     Methods:
-        get_queryset(self): Returns the queryset of task hstory for the authenticated user.
+        get_queryset(self): Returns the queryset of task history for the authenticated user.
 
     Permissions:
         - IsAuthor: Custom permission to check if the user is the author of the tasks.

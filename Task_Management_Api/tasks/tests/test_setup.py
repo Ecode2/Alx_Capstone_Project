@@ -28,16 +28,21 @@ class TestTaskSetUp(APITestCase):
         self.task_data = {
             "Title": self.fake.sentence(),
             "Description": self.fake.text(),
-            "completed": False,
+            "PriorityLevel": "LOW",
             "author": self.user,
-            'DueDate': self.fake.date_time_this_year(after_now=True, before_now=False) #'',
+            'DueDate': "2025-10-18T10:17:44.759Z"
         }
 
         self.category = Category.objects.create(name="Work", author=self.user)
-        self.task = Task.objects.create(Title="Test Task", Description="Test Description", author=self.user, 
-            DueDate=self.fake.date_time_this_year(after_now=True, before_now=False), category=self.category)
-            
+        self.task = Task.objects.create(Title="Test Task", Description="Test Description", author=self.user,
+                                        DueDate="2025-11-18T10:17:44.759Z",
+                                        category=self.category)
+        self.task2 = Task.objects.create(Title="Test Task two", Description="Test Description two", author=self.user,
+                                         DueDate="2025-12-18T10:17:44.759Z",
+                                         category=self.category)
+
         self.task_history = TaskHistory.objects.create(task=self.task, author=self.user)
+        self.task_history2 = TaskHistory.objects.create(task=self.task2, author=self.user)
 
         self.crud_url = reverse("read_update_delete_task", args=[self.task.id])
         self.complete_toggle_url = reverse("toggle_complete_pending_task", args=[self.task.id])

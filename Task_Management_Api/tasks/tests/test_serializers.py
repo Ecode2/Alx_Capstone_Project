@@ -3,6 +3,7 @@ from .test_setup import TestTaskSetUp
 from rest_framework.exceptions import ValidationError
 import datetime
 
+
 class TestTaskSerializers(TestTaskSetUp):
 
     def test_task_serializer(self):
@@ -10,7 +11,9 @@ class TestTaskSerializers(TestTaskSetUp):
 
         data = self.serializer.data
 
-        self.assertEqual(set(data.keys()), {"id", "Title", "Description", "DueDate", "category", "PriorityLevel", "Status", "completed_at", "author"})
+        self.assertEqual(set(data.keys()),
+                         {"id", "Title", "Description", "DueDate", "category", "PriorityLevel", "Status",
+                          "completed_at", "author"})
         self.assertEqual(data.get("Title"), self.task.Title)
 
     def test_task_serializer_due_date_validation(self):
@@ -35,10 +38,9 @@ class TestTaskSerializers(TestTaskSetUp):
         self.assertEqual(set(data.keys()), set())
 
     def test_task_history_serializer(self):
-        self.serializer = TaskHistorySerializer(instance=self.task_history)
+        self.serializer = TaskHistorySerializer(instance=self.task_history2)
 
         data = self.serializer.data
-
         self.assertEqual(set(data.keys()), {"id", "task", "author", "completed_at"})
-        self.assertEqual(data.get("task"), str(self.task_history.task))
-        self.assertEqual(data.get("author"), str(self.task_history.author))
+        self.assertEqual(data.get("task"), self.task_history2.task.id)
+        self.assertEqual(data.get("author"), self.task_history2.author.id)

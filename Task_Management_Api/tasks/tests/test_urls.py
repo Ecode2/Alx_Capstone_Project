@@ -13,26 +13,19 @@ class TestTaskUrls(TestTaskSetUp, URLPatternsTestCase):
     ]
 
     def test_list_create_task_url(self):
-        response = self.client.get(self.list_create_task_url)
+        response = self.client.get(self.list_create_url)
         self.assertNotEqual(response.status_code, status.HTTP_404_NOT_FOUND)
 
     def test_crud_task_url(self):
-        response = self.client.get(self.crud_task_url)
-        pdb.set_trace()
+        response = self.client.get(self.crud_url)
         self.assertNotEqual(response.status_code, status.HTTP_404_NOT_FOUND)
 
-    def test_read_task_url_post(self):
-        response = self.client.get(self.read_task_url)
+    def test_task_completion_toggle_url(self):
+        response = self.client.get(self.complete_toggle_url)
+
         self.assertNotEqual(response.status_code, status.HTTP_404_NOT_FOUND)
 
-    def test_unread_task_url_post(self):
-        response = self.client.get(self.unread_task_url)
-        self.assertNotEqual(response.status_code, status.HTTP_404_NOT_FOUND)
+    def test_task_history_url(self):
+        response = self.client.get(self.history_url)
 
-    def test_read_all_tasks_url_post(self):
-        response = self.client.get(self.read_all_tasks_url)
-        self.assertNotEqual(response.status_code, status.HTTP_404_NOT_FOUND)
-
-    def test_unread_all_tasks_url_post(self):
-        response = self.client.get(self.unread_all_tasks_url)
         self.assertNotEqual(response.status_code, status.HTTP_404_NOT_FOUND)

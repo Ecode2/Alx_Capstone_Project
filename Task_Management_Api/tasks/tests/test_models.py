@@ -1,3 +1,4 @@
+import pdb
 
 from ..models import Task, TaskHistory
 from .test_setup import TestTaskSetUp
@@ -21,10 +22,10 @@ class TestTaskModels(TestTaskSetUp):
 
     def test_task_default_status(self):
         task_data = self.task_data.copy()
-        task_data.pop('Status')
         task = Task.objects.create(**task_data)
 
         self.assertEqual(task.Status, 'PENDING')
+
 
 class TestTaskHistoryModels(TestTaskSetUp):
 

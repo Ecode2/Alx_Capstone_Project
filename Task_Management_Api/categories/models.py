@@ -14,7 +14,7 @@ class Category(models.Model):
     Methods:
         __str__(): Returns the string representation of the category, which is its name.
     """
-    name = models.CharField(max_length=50, unique=True)
+    name = models.CharField(max_length=50)
     author = models.ForeignKey(User, null=True, blank=True, on_delete=models.CASCADE)
 
     def __str__(self):
