@@ -1,9 +1,26 @@
-from rest_framework.serializers import (ModelSerializer, StringRelatedField, PrimaryKeyRelatedField, ValidationError)
+from rest_framework.serializers import (ModelSerializer, StringRelatedField, ValidationError)
 import datetime
 from django.db import models
 
 from categories.models import Category
 from .models import Task, TaskHistory
+
+
+from rest_framework.relations import PrimaryKeyRelatedField
+
+class UserCategoryRelatedField(PrimaryKeyRelatedField):
+    def get_queryset(self):
+        request = self.context.get('request', None)
+        queryset = super(UserCategoryRelatedField, self).get_queryset()
+        
+        if not request or not queryset:
+            return None
+
+        # Filter the queryset to include only general categories and categories created by the current user
+        return queryset.filter(
+            models.Q(author__isnull=True) | models.Q(author=request.user)
+        )
+
 
 class TaskSerializer(ModelSerializer):
     """
@@ -26,8 +43,8 @@ class TaskSerializer(ModelSerializer):
     Raises:
         - ValidationError: If the due date is in the past.
     """
-    author = StringRelatedField()
-    category = PrimaryKeyRelatedField(queryset=Category.objects.all(), allow_null=True)
+    author = StringRelatedField(read_only=True)
+    category = UserCategoryRelatedField(queryset=Category.objects.all(), allow_null=True, required=False)
 
     class Meta:
         model = Task
