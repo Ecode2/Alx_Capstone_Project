@@ -24,7 +24,7 @@ class TestTaskSerializers(TestTaskSetUp):
             "DueDate": invalid_due_date,
             "PriorityLevel": "LOW",
             "category": self.category.id,
-            }, context={'request': self.client.request().wsgi_request})
+            })
 
         with self.assertRaises(ValidationError):
             serializer.is_valid(raise_exception=True)
