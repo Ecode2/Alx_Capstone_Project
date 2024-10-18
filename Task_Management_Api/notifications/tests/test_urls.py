@@ -18,7 +18,7 @@ class TestNotificationUrls(TestNotificationSetUp, URLPatternsTestCase):
 
     def test_crud_url(self):
         response = self.client.get(self.crud_url)
-        pdb.set_trace()
+        
         self.assertNotEqual(response.status_code, status.HTTP_404_NOT_FOUND)
 
     def test_read_notifications_url_post(self):
