@@ -41,9 +41,10 @@ SECRET_KEY = config("SECRET_KEY")
 # SECURITY WARNING: don't run with debug turned on in production!
 if config("DEBUG", default=False, cast=bool) == False:
     DEBUG = config("DEBUG", default=False, cast=bool)
+    
     ALLOWED_HOSTS = config("ALLOWED_HOSTS", default="", cast=Csv())
 
-    SECURE_SSL_REDIRECT=True
+    SECURE_SSL_REDIRECT=False
 
     SECURE_HSTS_INCLUDE_SUBDOMAINS=True
 
