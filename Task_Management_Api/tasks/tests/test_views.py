@@ -13,7 +13,7 @@ class TestTaskViews(TestTaskSetUp):
         task_data = self.task_data.copy()
         task_data.pop("author")
         response = self.client.post(self.list_create_url, task_data)
-        pdb.set_trace()
+        
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
         self.assertEqual(response.data.get("Title"), self.task_data["Title"])
         self.assertEqual(response.data.get("Description"), self.task_data["Description"])
