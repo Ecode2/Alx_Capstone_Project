@@ -72,24 +72,18 @@ To install and run the Task Management API, follow these steps:
 
 ## Deployment
 
-The API is deployed on [Platform Name]. You can access the live API at [Deployment Link].
+The API is deployed on Railway. You can access the live API [HERE](https://alxcapstoneproject-production.up.railway.app/).
 
 ## Platform and Workflow
 
 The project uses a CI/CD pipeline with the following workflow:
 
-1. **Build**: The `build.sh` script is used to build the project.
-
-    ```sh
-    ./build.sh
-    ```
-
-2. **Test**: Automated tests are run to ensure code quality.
-3. **Deploy**: The project is deployed to the specified platform.
+1. **Test**: Automated  tests are run using GitHub Actions Continous Integration to ensure code quality.
+2. **Deploy**: The project is deployed to the specified platform after all CI actions are successful.
 
 ## Additional Information
 
-- **API Documentation**: Detailed API documentation is available at [API Documentation Link].
-- **License**: This project is licensed under the MIT License. See the [LICENSE](path/to/LICENSE) file for details.
+- **API Documentation**: Detailed API documentation is available at [Swagger Redoc](https://alxcapstoneproject-production.up.railway.app/).
+- **License**: This project is licensed under the MIT License. See the [LICENSE](/LICENSE) file for details.
 
 For any questions or support, please contact Me on [X](https://x.com/abubakar_alaya?s=11).
