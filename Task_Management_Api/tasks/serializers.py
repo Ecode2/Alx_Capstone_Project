@@ -11,10 +11,10 @@ from rest_framework.relations import PrimaryKeyRelatedField
 class UserCategoryRelatedField(PrimaryKeyRelatedField):
     def get_queryset(self):
         request = self.context.get('request', None)
-        queryset = super(UserCategoryRelatedField, self).get_queryset()
-        
-        if not request or not queryset:
-            return None
+        queryset = super().get_queryset()
+
+        if request is None:
+            return Category.objects.none()
 
         # Filter the queryset to include only general categories and categories created by the current user
         return queryset.filter(
