@@ -29,6 +29,7 @@ class TestTaskSetUp(APITestCase):
             "Title": self.fake.sentence(),
             "Description": self.fake.text(),
             "PriorityLevel": "LOW",
+            "author": self.user,
             'DueDate': "2025-10-18T10:17:44.759Z"
         }
 
