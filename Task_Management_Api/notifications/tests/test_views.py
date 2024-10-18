@@ -46,14 +46,14 @@ class TestNotificationViews(TestNotificationSetUp):
 
     def test_6_list_read_notifications(self):
         response = self.client.get(self.read_url)
-        pdb.set_trace()
+        
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(set(response.data), {"count", "next", "previous", "results"})
         self.assertIsInstance(response.data.get("results"), list)
 
     def test_7_list_unread_notifications(self):
         response = self.client.get(self.unread_url)
-        pdb.set_trace()
+        
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(set(response.data), {"count", "next", "previous", "results"})
         self.assertIsNotNone(response.data.get("results"))
