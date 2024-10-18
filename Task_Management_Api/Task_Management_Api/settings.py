@@ -44,7 +44,7 @@ if config("DEBUG", default=False, cast=bool) == False:
     
     ALLOWED_HOSTS = config("ALLOWED_HOSTS", default="", cast=Csv())
 
-    CSRF_TRUSTED_ORIGINS = config("CSRF_TRUSTED_ORIGINS", default="", cast=Csv())
+    CSRF_TRUSTED_ORIGINS = [config("CSRF_TRUSTED_ORIGINS", default="", cast=str)]
 
     SECURE_SSL_REDIRECT=False
 
