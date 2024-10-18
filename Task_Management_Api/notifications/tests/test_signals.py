@@ -17,14 +17,13 @@ class TestNotificationSignals(TestNotificationSetUp):
 
     def test_send_notification(self):
         notification = Notify.send(self.actor, self.recipient, self.verb, self.target)
-        pdb.set_trace()
+        
         self.assertIsInstance(notification, Notification)
         self.assertEqual(notification.actor, self.actor)
         self.assertEqual(notification.recipient, self.recipient)
         self.assertEqual(notification.verb, self.verb)
         self.assertEqual(notification.target_object_id, self.target.pk)
         self.assertEqual(notification.target_content_type, ContentType.objects.get_for_model(self.target))
-        pdb.set_trace()
 
     def test_read_notification(self):
         notification = Notify.send(self.actor, self.recipient, self.verb, self.target)
